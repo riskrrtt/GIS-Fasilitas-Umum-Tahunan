@@ -83,12 +83,54 @@
             attribution: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS'
         }).addTo(mainMap);
 
-        function editLine(njay) {
-            var coords = njay.layer._latlngs;
-            console.log("duar");
-            data = [];
-            for (i = 0; i < coords.length; i++) {
+        var markerIcon = L.Icon.extend({
+            options: {
+                iconSize: [40, 40]
+            }
+        });
+        var pasarIcon = new markerIcon({ iconUrl: '{{ URL::asset('icon/marker_pasar.png') }}' }),
+            sekolahIcon = new markerIcon({ iconUrl: '{{ URL::asset('icon/marker_sekolah.png') }}' }),
+            tempatIbadahIcon = new markerIcon({ iconUrl: '{{ URL::asset('icon/marker_agama.png') }}' });
+
+        var semuaDesa = {!! json_encode($semuaDesa->toArray()) !!}
+        var sekolah = {!! json_encode($sekolah->toArray()) !!}
+        var pasar = {!! json_encode($pasar->toArray()) !!}
+        var tempatIbadah = {!! json_encode($tempatIbadah->toArray()) !!}
+
+        semuaDesa.forEach(element => {
+            var id = jQuery.parseJSON(element['id']);
+            if (element['area']) {
+                try {
+                    var bruh = JSON.parse(element['area']);
+                    L.polyline(bruh, { id: id, color: 'blue' }).addTo(mainMap).bindPopup(element['nama']); // Blue for others
+                } catch (e) {
+                    console.error("Invalid JSON for Desa ID " + id, e);
+                }
+            }
+        });
+        sekolah.forEach(element => {
+            L.marker([element['lat'], element['lng']], { icon: sekolahIcon }).addTo(mainMap).bindPopup(element['nama']);
+        });
+        pasar.forEach(element => {
+            L.marker([element['lat'], element['lng']], { icon: pasarIcon }).addTo(mainMap).bindPopup(element['nama']);
+        });
+        tempatIbadah.forEach(element => {
+            L.marker([element['lat'], element['lng']], { icon: tempatIbadahIcon }).addTo(mainMap).bindPopup(element['nama']);
+        });
+
+        function editLine(e) {
+            var layer = e.target || e.layer;
+            var coords = layer.getLatLngs();
+            while (coords.length > 0 && Array.isArray(coords[0])) {
+                coords = coords[0];
+            }
+
+            var data = [];
+            for (var i = 0; i < coords.length; i++) {
                 data.push([coords[i].lat, coords[i].lng]);
+            }
+            if (data.length > 0) {
+                data.push(data[0]); // Explicitly close the loop
             }
             document.getElementById('koordinat').value = JSON.stringify(data);
         }
@@ -102,8 +144,8 @@
             editMode: true,
             drawCircleMarker: false,
             drawRectangle: false,
-            drawPolygon: false,
-            drawPolyline: true,
+            drawPolygon: true,
+            drawPolyline: false,
             dragMode: false,
             cutPolygon: false,
         });
@@ -116,10 +158,18 @@
                 document.getElementById('koordinat').value = "";
             });
             var coords = layer.getLatLngs();
+            while (coords.length > 0 && Array.isArray(coords[0])) {
+                coords = coords[0];
+            }
+            // Note: If simple array (Polyline), coords is already correct.
+
             console.log(coords);
-            data = [];
-            for (i = 0; i < coords.length; i++) {
+            var data = [];
+            for (var i = 0; i < coords.length; i++) {
                 data.push([coords[i].lat, coords[i].lng]);
+            }
+            if (data.length > 0) {
+                data.push(data[0]); // Explicitly close the loop
             }
             document.getElementById('koordinat').value = JSON.stringify(data);
         });

@@ -113,6 +113,38 @@
             maxZoom: 19,
             attribution: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS'
         }).addTo(mainMap);
+
+        var markerIcon = L.Icon.extend({
+            options: {
+                iconSize: [40, 40]
+            }
+        });
+        var pasarIcon = new markerIcon({ iconUrl: '{{ URL::asset('icon/marker_pasar.png') }}' }),
+            sekolahIcon = new markerIcon({ iconUrl: '{{ URL::asset('icon/marker_sekolah.png') }}' }),
+            tempatIbadahIcon = new markerIcon({ iconUrl: '{{ URL::asset('icon/marker_agama.png') }}' });
+
+        var desa = {!! json_encode($desa->toArray()) !!}
+        var sekolah = {!! json_encode($sekolah->toArray()) !!}
+        var semuaPasar = {!! json_encode($semuaPasar->toArray()) !!}
+        var tempatIbadah = {!! json_encode($tempatIbadah->toArray()) !!}
+
+        desa.forEach(element => {
+            var id = jQuery.parseJSON(element['id']);
+            if (element['area']) {
+                var bruh = JSON.parse(element['area']);
+                L.polyline(bruh, { id: id, color: 'red' }).addTo(mainMap);
+            }
+        });
+        sekolah.forEach(element => {
+            L.marker([element['lat'], element['lng']], { icon: sekolahIcon }).addTo(mainMap).bindPopup(element['nama']);
+        });
+        tempatIbadah.forEach(element => {
+            L.marker([element['lat'], element['lng']], { icon: tempatIbadahIcon }).addTo(mainMap).bindPopup(element['nama']);
+        });
+        semuaPasar.forEach(element => {
+            L.marker([element['lat'], element['lng']], { icon: pasarIcon }).addTo(mainMap).bindPopup(element['nama']);
+        });
+
         var pasar = {!! json_encode($pasar) !!};
         var marker;
         marker = L.marker([pasar.lat, pasar.lng]).bindPopup().addTo(mainMap);

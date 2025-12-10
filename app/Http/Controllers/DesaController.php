@@ -4,36 +4,62 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Desa;
+use App\Sekolah;
+use App\Pasar;
+use App\TempatIbadah;
 
 class DesaController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function showDesa() {
+    public function showDesa()
+    {
         $desa = Desa::get();
         return view('desa', compact('desa'));
     }
 
-    public function showAddDesa() {
-        return view('desa-tambah');
+    public function showAddDesa()
+    {
+        // Meneruskan data untuk peta
+        $semuaDesa = Desa::get();
+        $sekolah = Sekolah::get();
+        $pasar = Pasar::get();
+        $tempatIbadah = TempatIbadah::get();
+
+        return view('desa-tambah', compact('semuaDesa', 'sekolah', 'pasar', 'tempatIbadah'));
     }
 
-    public function showEditDesa(Desa $desa) {
+    public function showEditDesa(Desa $desa)
+    {
         $desa = Desa::where('id', $desa->id)->get()->first();
-        return view('desa-edit', compact('desa'));
+
+        // Meneruskan data untuk peta
+        $semuaDesa = Desa::get();
+        $sekolah = Sekolah::get();
+        $pasar = Pasar::get();
+        $tempatIbadah = TempatIbadah::get();
+
+        return view('desa-edit', compact('desa', 'semuaDesa', 'sekolah', 'pasar', 'tempatIbadah'));
     }
 
-    public function createDesa(Request $request) {
-        $this->validate($request,[
-            'nama_desa' => "required|min:3|max:100",
-        ],
-        [
-            'nama_desa.required' => "Nama desa wajib diisi",
-            'nama_desa.min' => "Nama desa minimal berjumlah 3 karakter",
-            'nama_desa.max' => "Nama desa maksimal berjumlah 50 karakter",
-        ]);
+    public function createDesa(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'nama_desa' => "required|min:3|max:100",
+                'koordinat' => "required",
+            ],
+            [
+                'nama_desa.required' => "Nama desa wajib diisi",
+                'nama_desa.min' => "Nama desa minimal berjumlah 3 karakter",
+                'nama_desa.max' => "Nama desa maksimal berjumlah 50 karakter",
+                'koordinat.required' => "Lokasi desa wajib digambar pada peta",
+            ]
+        );
 
         $desa = Desa::create([
             'nama' => $request->nama_desa,
@@ -42,32 +68,32 @@ class DesaController extends Controller
 
         if ($desa) {
             return redirect()->back()->with('done', 'Desa berhasil di tambahkan');
-        }
-        else {
+        } else {
             return redirect()->back()->with('failed', 'Desa gagal di tambahkan');
         }
     }
 
-    public function deleteDesa($desa) {
+    public function deleteDesa($desa)
+    {
         $desa = Desa::where('id', $desa)->delete();
-        if ($desa>0) {
+        if ($desa > 0) {
             return redirect()->back()->with('done-delete', 'Desa berhasil di hapus');
-        }
-        else {
+        } else {
             return redirect()->back()->with('failed-delete', 'Desa gagal di hapus');
         }
     }
 
-    public function updateDesa(Desa $desa, Request $request) {
+    public function updateDesa(Desa $desa, Request $request)
+    {
         $desa = Desa::where('id', $desa->id)->update([
             'nama' => $request->nama_desa,
             'area' => $request->koordinat,
-        ]);;
+        ]);
+        ;
 
-        if ($desa>0) {
+        if ($desa > 0) {
             return redirect()->back()->with('done', 'Desa berhasil di update');
-        }
-        else {
+        } else {
             return redirect()->back()->with('failed', 'Desa gagal di update');
         }
     }

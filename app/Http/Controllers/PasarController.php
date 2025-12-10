@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Pasar;
 use App\Desa;
+use App\Sekolah;
+use App\TempatIbadah;
 
 class PasarController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function showPasar() {
+    public function showPasar()
+    {
         $pasar = Pasar::get();
         // return response()->json([
         //     'message' => $sekolah
@@ -20,19 +24,33 @@ class PasarController extends Controller
         return view('pasar', compact('pasar'));
     }
 
-    public function showAddPasar() {
+    public function showAddPasar()
+    {
         $desa = Desa::get();
-        return view('pasar-tambah', compact('desa'));
+        // Meneruskan data untuk peta
+        $sekolah = Sekolah::get();
+        $semuaPasar = Pasar::get();
+        $tempatIbadah = TempatIbadah::get();
+
+        return view('pasar-tambah', compact('desa', 'sekolah', 'semuaPasar', 'tempatIbadah'));
     }
 
-    public function showEditPasar($pasar) {
+    public function showEditPasar($pasar)
+    {
         $desa = Desa::get();
         $pasar = Pasar::where('id', $pasar)->get()->first();
-        return view('pasar-edit', compact('desa', 'pasar'));
+
+        // Meneruskan data untuk peta
+        $sekolah = Sekolah::get();
+        $semuaPasar = Pasar::get();
+        $tempatIbadah = TempatIbadah::get();
+
+        return view('pasar-edit', compact('desa', 'pasar', 'sekolah', 'semuaPasar', 'tempatIbadah'));
     }
 
 
-    public function createPasar(Request $request) {
+    public function createPasar(Request $request)
+    {
         $pasar = Pasar::create([
             'id_desa' => $request->desa,
             'id_jenis_potensi' => 2,
@@ -44,23 +62,23 @@ class PasarController extends Controller
 
         if ($pasar) {
             return redirect()->back()->with('done', 'Pasar berhasil di tambahkan');
-        }
-        else {
+        } else {
             return redirect()->back()->with('failed', 'Pasar gagal di tambahkan');
         }
     }
 
-    public function deletePasar($pasar) {
+    public function deletePasar($pasar)
+    {
         $pasar = Pasar::where('id', $pasar)->delete();
-        if ($pasar>0) {
+        if ($pasar > 0) {
             return redirect()->back()->with('done-delete', 'Pasar berhasil di hapus');
-        }
-        else {
+        } else {
             return redirect()->back()->with('failed-delete', 'Pasar gagal di hapus');
         }
     }
 
-    public function updatePasar($pasar, Request $request) {
+    public function updatePasar($pasar, Request $request)
+    {
         $pasar = Pasar::where('id', $pasar)->update([
             'id_desa' => $request->desa,
             'id_jenis_potensi' => 2,
@@ -68,12 +86,12 @@ class PasarController extends Controller
             'alamat' => $request->alamat_pasar,
             'lat' => $request->lat,
             'lng' => $request->lng
-        ]);;
+        ]);
+        ;
 
-        if ($pasar>0) {
+        if ($pasar > 0) {
             return redirect()->back()->with('done', 'Pasar berhasil di update');
-        }
-        else {
+        } else {
             return redirect()->back()->with('failed', 'Pasar gagal di update');
         }
     }

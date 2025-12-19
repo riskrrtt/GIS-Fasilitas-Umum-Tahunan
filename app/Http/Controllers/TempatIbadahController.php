@@ -11,11 +11,6 @@ use App\Pasar;
 
 class TempatIbadahController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function showTempatIbadah()
     {
         $tempatIbadah = TempatIbadah::get();

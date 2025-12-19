@@ -10,11 +10,6 @@ use App\TempatIbadah;
 
 class DesaController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function showDesa()
     {
         $desa = Desa::get();

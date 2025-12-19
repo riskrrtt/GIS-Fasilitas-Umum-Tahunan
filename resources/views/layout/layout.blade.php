@@ -65,15 +65,7 @@
                     <span>Manajemen desa</span></a>
             </li>
 
-            <li class="nav-item">
-                <form action="{{ route('logout') }}" method="POST" class="nav-link p-0 m-0">
-                    @csrf
-                    <a class="nav-link" onclick='this.parentNode.submit(); return false;'>
-                        <i class="fas fa-fw fa-arrow-left"></i>
-                        <span>Logout</span>
-                    </a>
-                </form>
-            </li>
+
 
             <li class="nav-item" id="about">
                 <a class="nav-link" onclick="openAboutModal();">

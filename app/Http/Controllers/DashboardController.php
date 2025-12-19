@@ -12,10 +12,6 @@ use App\Jenjang;
 
 class DashboardController extends Controller
 {
-    public function __construct() {
-        $this->middleware('auth');
-    }
-
     public function showDashboard() {
         $desa = Desa::get();
         $pasar = Pasar::get();

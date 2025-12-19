@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,15 +14,9 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect()->route('dashboard');
-    }
-    return redirect()->route('login_page');
+    return redirect()->route('dashboard');
 });
 
-Route::get('/login', "LoginController@showLogin")->name('login_page')->middleware('guest');
-Route::post('/logout', 'LoginController@logout')->name('logout');
-Route::post('/submit_login', "LoginController@login")->name('submit_login');
 Route::get('/dashboard', "DashboardController@showDashboard")->name('dashboard');
 
 Route::get('/sekolah', "SekolahController@showSekolah")->name('sekolah');

@@ -10,11 +10,6 @@ use App\TempatIbadah;
 
 class PasarController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function showPasar()
     {
         $pasar = Pasar::get();

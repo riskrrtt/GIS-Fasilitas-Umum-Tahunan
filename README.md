@@ -35,41 +35,45 @@ Sistem Informasi Geografis (SIG) berbasis web untuk pemetaan fasilitas umum dan 
 
 ## Cara Instalasi
 
-1. **Clone Repository**
+## Cara Instalasi (Otomatis & Mudah)
+
+**Untuk Windows:**
+
+1. **Clone Repository** (atau download zip dan extract)
    ```bash
    git clone https://github.com/riskrrtt/GIS-Fasilitas-Umum-Tahunan.git
-   cd GIS-Fasilitas-Umum-Tahunan
    ```
 
-2. **Install Dependencies**
+2. **Siapkan Database**
+   - Buat database kosong di phpMyAdmin (misal: `gis_tahunan`).
+
+3. **Jalankan Installer**
+   - Klik dua kali file **`install.bat`** di dalam folder proyek.
+   - Ikuti petunjuk di layar.
+
+---
+
+## Cara Instalasi Manual (Alternatif)
+
+1. **Install Dependencies**
    ```bash
    composer install
    npm install && npm run dev
    ```
 
-3. **Konfigurasi Environment**
-   Salin file `.env.example` menjadi `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   Sesuaikan konfigurasi database di file `.env`:
-   ```env
-   DB_DATABASE=nama_database_anda
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
+2. **Konfigurasi Environment**
+   Salin file `.env.example` menjadi `.env`, lalu setup database.
 
-4. **Generate Key & Migrasi Database**
+3. **Generate Key & Migrasi**
    ```bash
    php artisan key:generate
-   php artisan migrate --seed
+   php artisan migrate:fresh --seed
    ```
 
-5. **Jalankan Aplikasi**
+4. **Jalankan Aplikasi**
    ```bash
    php artisan serve
    ```
-   Akses aplikasi di `http://localhost:8000`.
 
 ## Lisensi
 
